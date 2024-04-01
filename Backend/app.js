@@ -1,6 +1,7 @@
 import express from 'express'
 import authRouter from './src/Routes/auth.Routes.js'
 import courseRouter from './src/Routes/course.Routes.js'
+import paymentRouter from './src/Routes/payment.routes.js'
 import dotenv from 'dotenv'
 import 'dotenv/config'
 import cookieParser from 'cookie-parser'
@@ -33,7 +34,8 @@ app.use(
 
 // for routes 
 app.use('/api/v1/user',authRouter);
-app.use('/api/v1/course',courseRouter)
+app.use('/api/v1/course',courseRouter);
+app.use('/api/v1/payments',paymentRouter)
 
 
 

@@ -8,7 +8,7 @@ const userSchema = new Schema({
     username : {
         type:String,
         requried:[true,'Username is required '],
-        maxLength:[20,'Passward does not have more than 20 charcter '],
+       // maxLength:[20,'Passward does not have more than 20 charcter '],
         minLength:[5,'Passward should have minimum 5 charcter '],
         trim:true,
         

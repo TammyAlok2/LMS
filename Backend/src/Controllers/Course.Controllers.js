@@ -35,6 +35,46 @@ const getLecturesByCourseId = asyncHandler(async (req, res, next) => {
     );
 });
 
+const likeLectureVideo = asyncHandler(async(req,res,next)=>{
+// first get the lecture Id and validate it 
+
+const {courseId,lectureId} = req.params;
+
+
+const course = await Course.findById(courseId);
+
+const lectureIndex = course.lectures.findIndex(lecture => lecture._id == lectureId);
+
+if (lectureIndex === -1) {
+    throw new ApiError(400, "Lecture ID does not exist in the course");
+}
+
+//checking if already liked or not
+// Check if the user has already liked the lecture video
+if (course.lectures[lectureIndex].likes.some(like => like && like.userId.toString() === req.user.id.toString())) {
+  throw new ApiError(400, "You have already liked this lecture video");
+} 
+  // Add the user ID to the likes array of the lecture
+  course.lectures[lectureIndex].likes.push({ userId: req.user.id });
+
+
+  // Save the updated course
+  await course.save();
+
+  // Return the updated course lectures
+  res.status(200).json(
+      new ApiResponse(
+          200,
+          course.lectures,
+          "Lecture video liked successfully"
+      )
+  );
+})
+
+const dislikeLectureVideo = asyncHandler(async(req,res)=>{
+  // taking 
+  
+})
 const createCourse = asyncHandler(async (req, res, next) => {
   // taking the data from fronted and validation
   // taking new thumbnail from files  and upload on cloudinary
@@ -211,5 +251,6 @@ export {
   addLectureToCourseById,
   deleteLectureToCourseById,
   updateCourse,
-  removeCourse
+  removeCourse,
+  likeLectureVideo
 };

@@ -1,7 +1,7 @@
 
 import {Router} from 'express'
 import { authorizeRoles, isLoggedIn } from '../Middlewares/jwtAuth.js'
-import { getRazorpayApiKey,buySubscription,verifySubscription,cancelSubscription } from '../Controllers/payment.Controllers.js'
+import { getRazorpayApiKey,buySubscription,verifySubscription,cancelSubscription,allPayments } from '../Controllers/payment.Controllers.js'
 const router = Router()
 
 router

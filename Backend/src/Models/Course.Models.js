@@ -34,7 +34,14 @@ const courseSchema = new Schema({
                     type:String,
                     required:true,
                 }
-            }
+            },
+            likes: [{
+                userId: {
+                  type: mongoose.Schema.Types.ObjectId,
+                  ref: 'User',
+                  required: true
+                }
+              }],
         }
     ],
     numberOfLectures: {

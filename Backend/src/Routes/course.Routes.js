@@ -7,6 +7,7 @@ import {
   getLecturesByCourseId,
   removeCourse,
   updateCourse,
+  likeLectureVideo
 } from '../Controllers/Course.Controllers.js';
 import {authorizeRoles, isLoggedIn} from '../Middlewares/jwtAuth.js';
 import {upload} from '../Middlewares/multer.middleware.js';
@@ -32,6 +33,8 @@ router
 
   router.route('/lecture/:courseId/:lectureId')
   .delete(isLoggedIn,authorizeRoles("ADMIN"),deleteLectureToCourseById)
+
+  router.route('/lecture/:courseId/:lectureId').post(isLoggedIn,likeLectureVideo);
 
 export default router;
 
