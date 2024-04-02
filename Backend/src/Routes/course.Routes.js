@@ -7,7 +7,10 @@ import {
   getLecturesByCourseId,
   removeCourse,
   updateCourse,
-  likeLectureVideo
+  likeLectureVideo,
+  dislikeLectureVideo,
+  commentLectureVideo,
+  replyCommentLectureVideo
 } from '../Controllers/Course.Controllers.js';
 import {authorizeRoles, isLoggedIn} from '../Middlewares/jwtAuth.js';
 import {upload} from '../Middlewares/multer.middleware.js';
@@ -36,5 +39,11 @@ router
 
   router.route('/lecture/:courseId/:lectureId').post(isLoggedIn,likeLectureVideo);
 
-export default router;
+  router.route('/lecture/dislike/:courseId/:lectureId').post(isLoggedIn,dislikeLectureVideo);
+
+  router.route('/lecture/comment/:courseId/:lectureId').post(isLoggedIn,commentLectureVideo);
+
+  router.route('/lecture/comment/reply/:courseId/:lectureId/:commentId').post(isLoggedIn,replyCommentLectureVideo);
+
+  export default router;
 

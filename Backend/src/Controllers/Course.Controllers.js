@@ -43,6 +43,10 @@ const {courseId,lectureId} = req.params;
 
 const course = await Course.findById(courseId);
 
+if(!course){
+  throw new ApiError(400,"course does not exists")
+}
+
 const lectureIndex = course.lectures.findIndex(lecture => lecture._id == lectureId);
 
 if (lectureIndex === -1) {
@@ -72,8 +76,122 @@ if (course.lectures[lectureIndex].likes.some(like => like && like.userId.toStrin
 })
 
 const dislikeLectureVideo = asyncHandler(async(req,res)=>{
-  // taking 
+  // taking the lectureId ,courseId and validate it 
+  const {courseId, lectureId } = req.params;
+
+  const course = await Course.findById(courseId)
+
+  if(!course){
+    throw new ApiError(400,"course does not exists")
+  }
+
+  const lectureIndex = course.lectures.findIndex(lecture => lecture._id == lectureId)
+  if (lectureIndex === -1) {
+    throw new ApiError(400, "Lecture ID does not exist in the course");
+}
+// remove the userId to the likes array of the lecture if you likes 
+
+if (course.lectures[lectureIndex].likes.some(like => like && like.userId.toString() === req.user.id.toString())) {
+ 
+  course.lectures[lectureIndex].likes.pull({ userId: req.user.id });
+ 
+} 
+else{
+ throw new ApiError(400, "You have not  liked this lecture video");
+}
   
+  
+
+
+  await course.save();
+  res.status(200).json(
+    new ApiResponse(200,
+      course.lectures,
+      "Lecture video disliked successfully")
+  )
+})
+
+const commentLectureVideo = asyncHandler(async (req,res)=>{
+  // taking the course Id  and lectureid from req.params 
+  // taking user id from req.user.id 
+const {courseId, lectureId } = req.params;
+
+let {comment} = req.body;
+console.log(comment)
+if(!comment){
+  throw new ApiError(400,'comment is required')
+}
+// finding the course 
+
+let course = await Course.findById(courseId)
+if(!course){
+  throw new ApiError(400, 'course does not found ')
+}
+
+const lectureIndex = course.lectures.findIndex(lecture => lecture._id == lectureId)
+if (lectureIndex === -1) {
+  throw new ApiError(400, "Lecture ID does not exist in the course");
+}
+
+// put comments in the models 
+let commentDone = course.lectures[lectureIndex].comments.push({
+  userId:req.user.id,
+  text:comment.toString()
+})
+
+if(!commentDone){
+  throw new ApiError(400,"Comment can't be added")
+}
+
+await course.save();
+return res.status(200).json(
+  new ApiResponse(200,course.lectures,"Comment added successfully")
+)
+
+})
+
+const replyCommentLectureVideo = asyncHandler(async (req,res)=>{
+  // first get the courseId , lectureId, CommentId 
+  const {courseId,lectureId,commentId} = req.params;
+  // validation for coureId , lectureId and commentId 
+// finding the course 
+
+let course = await Course.findById(courseId);
+if(!course){
+  throw new ApiError(400, 'course does not found ')
+}
+
+const lectureIndex = course.lectures.findIndex(lecture => lecture._id == lectureId)
+if (lectureIndex === -1) {
+  throw new ApiError(400, "Lecture ID does not exist in the course");
+}
+
+// find the comment id and validate it 
+const commentIndex = course.lectures[lectureIndex].comments.findIndex(val => val._id == commentId)
+if (commentIndex === -1) {
+  throw new ApiError(400, "Comment  ID does not exist ");
+}
+  const {reply} = req.body;
+  if(!reply){
+    throw new ApiError(404,"Reply parameter is missing ")
+  }
+
+ // pushing the reply 
+ let replyDone = course.lectures[lectureIndex].comments[commentIndex].replies.push({
+  userId:req.user.id,
+  text:reply.toString()
+})
+
+if(!replyDone){
+  throw new ApiError(400,'Reply not added ')
+}
+
+return res.status(200).json(
+  new ApiResponse(200,course.lectures,"Replied added successfully")
+)
+
+
+
 })
 const createCourse = asyncHandler(async (req, res, next) => {
   // taking the data from fronted and validation
@@ -252,5 +370,8 @@ export {
   deleteLectureToCourseById,
   updateCourse,
   removeCourse,
-  likeLectureVideo
+  likeLectureVideo,
+dislikeLectureVideo,
+commentLectureVideo,
+replyCommentLectureVideo
 };

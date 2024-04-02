@@ -1,5 +1,8 @@
 import {mongoose,Schema,model } from 'mongoose'
 
+
+
+
 const courseSchema = new Schema({
 
     title:{
@@ -42,6 +45,33 @@ const courseSchema = new Schema({
                   required: true
                 }
               }],
+          comments:[
+            {
+                userId:{
+                    type:mongoose.Schema.Types.ObjectId,
+                    ref:'User',
+                    required:true,
+                },
+                text:{
+                    type:String,
+                    required:true
+                },
+                replies: [{
+                    userId:{
+                        type:mongoose.Schema.Types.ObjectId,
+                        ref:'User',
+                    
+                    },
+                    text:{
+                        type:String,
+            
+                    },
+                
+                }
+            ]
+            }
+          ]
+
         }
     ],
     numberOfLectures: {
